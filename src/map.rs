@@ -28,9 +28,17 @@ pub mod map {
                 for y in 0..height {
                     let random_value = rng.gen_range(0, 2);
                     match random_value {
-                        0 => content[x as usize][y as usize] = MapElement::Water { height: 0 },
-                        1 => content[x as usize][y as usize] = MapElement::Land { height: 0 },
-                        _ => content[x as usize][y as usize] = MapElement::Void,
+                        0 => {
+                            content[x][y] = MapElement::Water {
+                                height: rng.gen_range(-128, 127),
+                            }
+                        }
+                        1 => {
+                            content[x][y] = MapElement::Land {
+                                height: rng.gen_range(-128, 127),
+                            }
+                        }
+                        _ => content[x][y] = MapElement::Void,
                     }
                 }
             }
@@ -62,12 +70,47 @@ mod tests {
             map::Map {
                 content: vec![
                     vec![
-                        map::MapElement::Land { height: 0 },
-                        map::MapElement::Water { height: 0 },
+                        map::MapElement::Land { height: -122 },
+                        map::MapElement::Water { height: 91 },
                     ],
                     vec![
-                        map::MapElement::Water { height: 0 },
-                        map::MapElement::Water { height: 0 },
+                        map::MapElement::Water { height: -104 },
+                        map::MapElement::Land { height: -68 },
+                    ]
+                ]
+            }
+        )
+    }
+
+    #[test]
+    fn test_larger_map() {
+        assert_eq!(
+            map::Map::new(4, 4, 0),
+            map::Map {
+                content: vec![
+                    vec![
+                        map::MapElement::Land { height: -122 },
+                        map::MapElement::Water { height: 91 },
+                        map::MapElement::Water { height: -104 },
+                        map::MapElement::Land { height: -68 },
+                    ],
+                    vec![
+                        map::MapElement::Water { height: -100 },
+                        map::MapElement::Land { height: -65 },
+                        map::MapElement::Water { height: -2 },
+                        map::MapElement::Land { height: 68 },
+                    ],
+                    vec![
+                        map::MapElement::Land { height: -61 },
+                        map::MapElement::Land { height: -106 },
+                        map::MapElement::Water { height: -40 },
+                        map::MapElement::Land { height: 83 },
+                    ],
+                    vec![
+                        map::MapElement::Land { height: -55 },
+                        map::MapElement::Land { height: 17 },
+                        map::MapElement::Water { height: -23 },
+                        map::MapElement::Water { height: -118 },
                     ]
                 ]
             }
