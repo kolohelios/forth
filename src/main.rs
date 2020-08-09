@@ -2,6 +2,9 @@ use std::sync::mpsc;
 use std::thread;
 use std::time::{Duration, Instant};
 
+extern crate machine;
+
+mod flower;
 mod map;
 
 fn main() {

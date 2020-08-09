@@ -4,7 +4,6 @@ version = "0.0.1"
 authors = ["Jon Edwards <jkedwards@me.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+machine = "0.3.0"
 rand = "0.7.3"
