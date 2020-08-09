@@ -5,5 +5,6 @@ authors = ["Jon Edwards <jkedwards@me.com>"]
 edition = "2018"
 
 [dependencies]
+cursive = "0.15.0"
 machine = "0.3.0"
 rand = "0.7.3"

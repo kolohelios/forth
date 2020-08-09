@@ -105,6 +105,24 @@ impl Growing {
     }
 }
 
+// methods!(
+//     Flower,
+//     [
+//         Seed, Planted, Growing => fn can_pollinate(&self) -> ()
+// ]
+// );
+
+impl Flower {
+    pub fn display(&self) -> () {
+        match self {
+            Flower::Seed(ref _v) => println!("\x1b[1;30m Seed! (*)"),
+            Flower::Planted(ref _v) => println!("Planted! (~)"),
+            Flower::Growing(ref _v) => println!("\x1b[1;30m Growing! (~) \x1b[0m"),
+            _ => println!("Unknown!"),
+        }
+    }
+}
+
 pub mod flower {
     use super::*;
     pub fn create_flower() -> Flower {
@@ -130,5 +148,6 @@ mod tests {
         assert_eq!(f, Flower::planted(true, true, 3));
         f = f.on_sunshine(Sunshine { amount: 2 });
         assert_eq!(f, Flower::growing(false, false, 0));
+        f.display();
     }
 }
