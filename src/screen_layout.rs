@@ -1,28 +1,44 @@
 use cursive::theme::{Color, ColorStyle};
 use cursive::traits::*;
-use cursive::view::SizeConstraint;
-use cursive::views::{Canvas, FixedLayout, OnLayoutView, ResizedView};
+use cursive::view::{Position, SizeConstraint};
+use cursive::views::{
+    Button, Canvas, FixedLayout, LayerPosition, OnLayoutView, ResizedView, TextView,
+};
 use cursive::{Cursive, Printer, Rect, Vec2};
+use rand::Rng;
+use std::thread;
+use std::time::{Duration, Instant};
 
-fn draw_flower(_: &(), p: &Printer) {
-    let x_max = p.size.x as u8;
-
+fn draw_pot(p: &Printer, x_max: u8) {
     for x in 0..x_max {
         let dirt_style = ColorStyle::new(Color::RgbLowRes(3, 1, 0), Color::RgbLowRes(0, 0, 0));
-        let background_style = ColorStyle::new(Color::RgbLowRes(0, 0, 0), Color::TerminalDefault);
+        let background_style =
+            ColorStyle::new(Color::RgbLowRes(0, 0, 0), Color::RgbLowRes(5, 5, 5));
 
         p.with_color(dirt_style, |printer| {
-            printer.print((x, 1), "░");
+            if x == 0 {
+                printer.print((x, 1), "\\");
+            } else if x == x_max - 1 {
+                printer.print((x, 1), "/");
+            } else {
+                printer.print((x, 1), "░");
+            }
         });
         p.with_color(background_style, |printer| {
             printer.print((x, 0), " ");
         });
     }
+}
 
-    let style = ColorStyle::new(Color::RgbLowRes(1, 5, 1), Color::TerminalDefault);
+fn draw_flower(_: &(), p: &Printer) {
+    let x_max = p.size.x as u8;
+
+    draw_pot(p, x_max);
+
+    let style = ColorStyle::new(Color::RgbLowRes(1, 5, 1), Color::RgbLowRes(0, 0, 0));
 
     p.with_color(style, |printer| {
-        printer.print((4, 0), "|");
+        printer.print((4, 0), "┬");
     });
 }
 
@@ -41,7 +57,7 @@ fn draw_sky(_: &(), p: &Printer) {
 }
 
 fn render(siv: &mut Cursive) {
-    let top_panel = Canvas::new(()).with_draw(draw_sky);
+    let top_panel = Canvas::new(()).with_draw(draw_sky).with_name("sky");
     let bottom_panel = Canvas::new(()).with_draw(draw_flower).fixed_size((10, 2));
 
     let resized_view = ResizedView::new(
@@ -72,8 +88,39 @@ fn render(siv: &mut Cursive) {
     siv.add_fullscreen_layer(view);
 }
 
+fn draw_rain(_: &(), p: &Printer) {
+    let rain_color = ColorStyle::new(Color::RgbLowRes(1, 3, 5), Color::RgbLowRes(0, 2, 5));
+    let mut rng = rand::thread_rng();
+
+    let x = rng.gen_range(0, 40);
+    let y = rng.gen_range(0, 20);
+
+    p.with_color(rain_color, |printer| {
+        printer.print((0, 0), "|");
+    });
+}
+
+fn move_top(c: &mut Cursive, x_in: isize, y_in: isize) {
+    let s = c.screen_mut();
+    let l = LayerPosition::FromFront(0);
+
+    let pos = s.offset().saturating_add((x_in, y_in));
+    let p = Position::absolute(pos);
+
+    s.reposition_layer(l, p);
+}
+
 pub fn run_screen_event_loop() {
     let mut siv = cursive::default();
+    siv.load_toml(include_str!("../assets/cursive_theme.toml"))
+        .unwrap();
     render(&mut siv);
+    siv.add_global_callback('q', Cursive::quit);
+
+    siv.add_global_callback('w', |s| move_top(s, 0, -1));
+    siv.add_global_callback('a', |s| move_top(s, -1, 0));
+    siv.add_global_callback('s', |s| move_top(s, 0, 1));
+    siv.add_global_callback('d', |s| move_top(s, 1, 0));
+    siv.add_layer(Canvas::new(()).with_draw(draw_rain));
     siv.run();
 }

@@ -4,7 +4,7 @@ machine!(
     #[derive(Clone, Debug, PartialEq)]
     enum Flower {
         Seed,
-        Planted {
+        Germinating {
             fertilized: bool,
             watered: bool,
             sunshine: u8,
@@ -50,16 +50,16 @@ pub struct Sunshine {
 }
 
 transitions!(Flower, [
-    (Seed, Advance) => Planted,
-    (Planted, Fertilize) => [ Planted, Growing ],
-    (Planted, Water) => [ Planted, Growing ],
-    (Planted, Sunshine) => [ Planted, Growing ],
-    (Planted, Advance) => Growing
+    (Seed, Advance) => Germinating,
+    (Germinating, Fertilize) => [ Germinating, Growing ],
+    (Germinating, Water) => [ Germinating, Growing ],
+    (Germinating, Sunshine) => [ Germinating, Growing ],
+    (Germinating, Advance) => Growing
 ]);
 
 impl Seed {
-    pub fn on_advance(self, _: Advance) -> Planted {
-        Planted {
+    pub fn on_advance(self, _: Advance) -> Germinating {
+        Germinating {
             fertilized: false,
             watered: false,
             sunshine: 0,
@@ -67,7 +67,7 @@ impl Seed {
     }
 }
 
-impl Planted {
+impl Germinating {
     pub fn on_advance(self, _: Advance) -> Growing {
         Growing {
             fertilized: false,
@@ -80,14 +80,14 @@ impl Planted {
         if self.sunshine > 4 && self.watered == true {
             return Flower::growing(false, false, 0);
         }
-        Flower::planted(true, self.watered, self.sunshine)
+        Flower::germinating(true, self.watered, self.sunshine)
     }
 
     pub fn on_water(self, _: Water) -> Flower {
         if self.fertilized && self.sunshine > 4 {
             return Flower::growing(false, false, 0);
         }
-        Flower::planted(self.fertilized, true, self.sunshine)
+        Flower::germinating(self.fertilized, true, self.sunshine)
     }
 
     pub fn on_sunshine(self, input: Sunshine) -> Flower {
@@ -95,7 +95,7 @@ impl Planted {
         if self.fertilized && self.watered && new_sunshine > 4 {
             return Flower::growing(false, false, 0);
         }
-        Flower::planted(self.fertilized, self.watered, new_sunshine)
+        Flower::germinating(self.fertilized, self.watered, new_sunshine)
     }
 }
 
@@ -116,7 +116,7 @@ impl Flower {
     pub fn display(&self) -> () {
         match self {
             Flower::Seed(ref _v) => println!("\x1b[1;30m Seed! (*)"),
-            Flower::Planted(ref _v) => println!("Planted! (~)"),
+            Flower::Germinating(ref _v) => println!("Planted! (~)"),
             Flower::Growing(ref _v) => println!("\x1b[1;30m Growing! (~) \x1b[0m"),
             _ => println!("Unknown!"),
         }
@@ -139,13 +139,13 @@ mod tests {
         let mut f = flower::create_flower();
         assert_eq!(f, Flower::seed());
         f = f.on_advance(Advance);
-        assert_eq!(f, Flower::planted(false, false, 0));
+        assert_eq!(f, Flower::germinating(false, false, 0));
         f = f.on_fertilize(Fertilize);
-        assert_eq!(f, Flower::planted(true, false, 0));
+        assert_eq!(f, Flower::germinating(true, false, 0));
         f = f.on_water(Water);
-        assert_eq!(f, Flower::planted(true, true, 0));
+        assert_eq!(f, Flower::germinating(true, true, 0));
         f = f.on_sunshine(Sunshine { amount: 3 });
-        assert_eq!(f, Flower::planted(true, true, 3));
+        assert_eq!(f, Flower::germinating(true, true, 3));
         f = f.on_sunshine(Sunshine { amount: 2 });
         assert_eq!(f, Flower::growing(false, false, 0));
         f.display();
