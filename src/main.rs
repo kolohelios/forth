@@ -1,4 +1,8 @@
-use std::sync::mpsc;
+use cursive::view::Position;
+use cursive::views::LayerPosition;
+use cursive::Cursive;
+use rand::Rng;
+use std::sync::mpsc::{channel, Sender};
 use std::thread;
 use std::time::{Duration, Instant};
 
@@ -9,28 +13,45 @@ mod map;
 mod screen_layout;
 
 fn main() {
-    let (clock_tx, clock_rx) = mpsc::channel();
+    let (mut msg_sender, msg_receiver) = channel();
 
-    let handle = thread::spawn(move || clock(clock_tx));
-    thread::spawn(move || display_clock(clock_rx));
+    let mut siv = cursive::default();
 
-    screen_layout::run_screen_event_loop();
+    siv = screen_layout::run_screen_event_loop(siv);
 
-    // TODO somehow we'll need to get back to where we aren't letting threads just hang out
-    // handle.join().unwrap();
-}
+    siv.refresh();
 
-fn clock(tx: mpsc::Sender<String>) {
-    let now = Instant::now();
-    for i in 1..10 {
-        let message = format!("time is {}", now.elapsed().as_millis());
-        tx.send(message).unwrap();
-        thread::sleep(Duration::from_millis(200));
+    siv.add_global_callback('q', Cursive::quit);
+
+    thread::spawn(move || clock(msg_sender));
+    loop {
+        siv.step();
+        if !siv.is_running() {
+            break;
+        }
+
+        let mut needs_refresh = false;
+
+        for m in msg_receiver.try_iter() {
+            needs_refresh = true;
+            let mut rng = rand::thread_rng();
+
+            let x = rng.gen_range(-50, 50);
+            let y = rng.gen_range(-15, 15);
+
+            siv.reposition_layer(LayerPosition::FromFront(0), Position::absolute((x, y)));
+        }
+        if needs_refresh {
+            siv.refresh();
+        }
     }
 }
 
-fn display_clock(rx: mpsc::Receiver<String>) {
-    for received in rx {
-        println!("Got: {}", received);
+fn clock(sender: Sender<String>) {
+    let now = Instant::now();
+    for i in 1..1000 {
+        let message = format!("time is {}", now.elapsed().as_millis());
+        sender.send(message).unwrap();
+        thread::sleep(Duration::from_millis(200));
     }
 }

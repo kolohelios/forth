@@ -1,13 +1,8 @@
 use cursive::theme::{Color, ColorStyle};
 use cursive::traits::*;
 use cursive::view::{Position, SizeConstraint};
-use cursive::views::{
-    Button, Canvas, FixedLayout, LayerPosition, OnLayoutView, ResizedView, TextView,
-};
+use cursive::views::{Canvas, FixedLayout, LayerPosition, OnLayoutView, ResizedView};
 use cursive::{Cursive, Printer, Rect, Vec2};
-use rand::Rng;
-use std::thread;
-use std::time::{Duration, Instant};
 
 fn draw_pot(p: &Printer, x_max: u8) {
     for x in 0..x_max {
@@ -88,12 +83,8 @@ fn render(siv: &mut Cursive) {
     siv.add_fullscreen_layer(view);
 }
 
-fn draw_rain(_: &(), p: &Printer) {
+pub fn draw_rain(_: &(), p: &Printer) {
     let rain_color = ColorStyle::new(Color::RgbLowRes(1, 3, 5), Color::RgbLowRes(0, 2, 5));
-    let mut rng = rand::thread_rng();
-
-    let x = rng.gen_range(0, 40);
-    let y = rng.gen_range(0, 20);
 
     p.with_color(rain_color, |printer| {
         printer.print((0, 0), "|");
@@ -110,17 +101,11 @@ fn move_top(c: &mut Cursive, x_in: isize, y_in: isize) {
     s.reposition_layer(l, p);
 }
 
-pub fn run_screen_event_loop() {
-    let mut siv = cursive::default();
+pub fn run_screen_event_loop(mut siv: cursive::Cursive) -> cursive::Cursive {
     siv.load_toml(include_str!("../assets/cursive_theme.toml"))
         .unwrap();
     render(&mut siv);
-    siv.add_global_callback('q', Cursive::quit);
 
-    siv.add_global_callback('w', |s| move_top(s, 0, -1));
-    siv.add_global_callback('a', |s| move_top(s, -1, 0));
-    siv.add_global_callback('s', |s| move_top(s, 0, 1));
-    siv.add_global_callback('d', |s| move_top(s, 1, 0));
     siv.add_layer(Canvas::new(()).with_draw(draw_rain));
-    siv.run();
+    siv
 }

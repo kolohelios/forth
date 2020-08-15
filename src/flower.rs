@@ -1,3 +1,4 @@
+use cursive::theme::Color;
 use machine::*;
 
 machine!(
@@ -123,6 +124,41 @@ impl Flower {
     }
 }
 
+#[derive(Debug, PartialEq)]
+pub struct FlowerColor;
+
+impl FlowerColor {
+    pub const BLACK: Color = Color::RgbLowRes(0, 0, 0);
+    pub const BLUE: Color = Color::RgbLowRes(1, 2, 5);
+    pub const WHITE: Color = Color::RgbLowRes(5, 5, 5);
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct FlowerGlyphxel {
+    foreground_color: Color,
+    background_color: Color,
+    character: char,
+}
+
+pub fn draw_flower() -> Vec<Vec<FlowerGlyphxel>> {
+    const WIDTH: usize = 7;
+    const HEIGHT: usize = 7;
+
+    let mut flower = vec![
+        vec![
+            FlowerGlyphxel {
+                foreground_color: FlowerColor::WHITE,
+                background_color: FlowerColor::BLACK,
+                character: ' '
+            };
+            HEIGHT
+        ];
+        WIDTH
+    ];
+
+    flower
+}
+
 pub mod flower {
     use super::*;
     pub fn create_flower() -> Flower {
@@ -149,5 +185,274 @@ mod tests {
         f = f.on_sunshine(Sunshine { amount: 2 });
         assert_eq!(f, Flower::growing(false, false, 0));
         f.display();
+    }
+
+    #[test]
+    fn test_draw_flower() {
+        let flower = draw_flower();
+        assert_eq!(
+            flower,
+            vec![
+                vec![
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                ],
+                vec![
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                ],
+                vec![
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                ],
+                vec![
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                ],
+                vec![
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                ],
+                vec![
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                ],
+                vec![
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                    FlowerGlyphxel {
+                        foreground_color: Color::RgbLowRes(5, 5, 5),
+                        background_color: Color::RgbLowRes(0, 0, 0),
+                        character: ' '
+                    },
+                ],
+            ]
+        );
     }
 }
