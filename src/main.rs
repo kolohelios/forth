@@ -9,6 +9,7 @@ use std::time::{Duration, Instant};
 extern crate machine;
 
 mod flower;
+mod flower_display;
 mod map;
 mod screen_layout;
 
