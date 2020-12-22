@@ -4,37 +4,36 @@ use cursive::view::{Position, SizeConstraint};
 use cursive::views::{Canvas, FixedLayout, LayerPosition, OnLayoutView, ResizedView};
 use cursive::{Cursive, Printer, Rect, Vec2};
 
-fn draw_pot(p: &Printer, x_max: u8) {
-    for x in 0..x_max {
-        let dirt_style = ColorStyle::new(Color::RgbLowRes(3, 1, 0), Color::RgbLowRes(0, 0, 0));
-        let background_style =
-            ColorStyle::new(Color::RgbLowRes(0, 0, 0), Color::RgbLowRes(5, 5, 5));
+#[path = "flower_display.rs"]
+mod flower_display;
 
-        p.with_color(dirt_style, |printer| {
-            if x == 0 {
-                printer.print((x, 1), "\\");
-            } else if x == x_max - 1 {
-                printer.print((x, 1), "/");
-            } else {
-                printer.print((x, 1), "░");
-            }
-        });
-        p.with_color(background_style, |printer| {
-            printer.print((x, 0), " ");
-        });
+fn print_flower(p: &Printer, flower: flower_display::DrawnFlower) {
+    let x_max = flower[0].len();
+    let y_max = flower.len();
+
+    for y in 0..y_max {
+        for x in 0..x_max {
+            let flower_glyphxel = &flower[y][x];
+            p.with_color(
+                ColorStyle::from((
+                    flower_glyphxel.foreground_color,
+                    flower_glyphxel.background_color,
+                )),
+                |printer| {
+                    printer.print((x, y), &flower_glyphxel.character.to_string());
+                },
+            )
+        }
     }
 }
 
 fn draw_flower(_: &(), p: &Printer) {
     let x_max = p.size.x as u8;
 
-    draw_pot(p, x_max);
+    let mut flower = flower_display::draw_empty_space(12, 7, flower_display::FlowerColor::WHITE);
+    flower = flower_display::draw_pot(flower, Color::RgbLowRes(5, 5, 5));
 
-    let style = ColorStyle::new(Color::RgbLowRes(1, 5, 1), Color::RgbLowRes(0, 0, 0));
-
-    p.with_color(style, |printer| {
-        printer.print((4, 0), "┬");
-    });
+    print_flower(p, flower);
 }
 
 fn draw_sky(_: &(), p: &Printer) {

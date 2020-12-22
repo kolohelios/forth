@@ -14,12 +14,11 @@ machine!(
             watered: bool,
             sunshine: u8,
         },
-        // Flowering {
-        //     fertilized: bool,
-        //     watered: bool,
-        //     visited_by_bees: u8,
-        //     sunshine: u8,
-        // },
+        Flowering {
+            watered: bool,
+            visited_by_bees: u8,
+            sunshine: u8,
+        },
         // Pollinated {
         //     sunshine: u8,
         //     produces_seed: bool,
@@ -54,7 +53,10 @@ transitions!(Flower, [
     (Germinating, Fertilize) => [ Germinating, Growing ],
     (Germinating, Water) => [ Germinating, Growing ],
     (Germinating, Sunshine) => [ Germinating, Growing ],
-    (Germinating, Advance) => Growing
+    (Germinating, Advance) => Growing,
+    (Growing, Fertilize) => [ Growing, Flowering ],
+    (Growing, Water) => [ Growing, Flowering ],
+    (Growing, Sunshine) => [ Growing, Flowering ]
 ]);
 
 impl Seed {
@@ -100,8 +102,33 @@ impl Germinating {
 }
 
 impl Growing {
-    pub fn on_advance(self, _: Advance) -> Seed {
-        Seed {}
+    pub fn on_advance(self, _: Advance) -> Flower {
+        if (self.sunshine > 4 && self.watered && self.fertilized) {
+            return Flower::flowering(false, 0, 0);
+        }
+        Flower::growing(self.fertilized, self.watered, self.sunshine)
+    }
+
+    pub fn on_fertilize(self, _: Fertilize) -> Flower {
+        if self.sunshine > 4 && self.watered == true {
+            return Flower::flowering(false, 0, 0);
+        }
+        Flower::growing(true, self.watered, self.sunshine)
+    }
+
+    pub fn on_water(self, _: Water) -> Flower {
+        if self.fertilized && self.sunshine > 4 {
+            return Flower::flowering(false, 0, 0);
+        }
+        Flower::growing(self.fertilized, true, self.sunshine)
+    }
+
+    pub fn on_sunshine(self, input: Sunshine) -> Flower {
+        let new_sunshine = self.sunshine + input.amount;
+        if self.fertilized && self.watered && new_sunshine > 4 {
+            return Flower::flowering(false, 0, 0);
+        }
+        Flower::growing(self.fertilized, self.watered, new_sunshine)
     }
 }
 
@@ -148,6 +175,9 @@ mod tests {
         assert_eq!(f, Flower::germinating(true, true, 3));
         f = f.on_sunshine(Sunshine { amount: 2 });
         assert_eq!(f, Flower::growing(false, false, 0));
-        f.display();
+        f = f.on_fertilize(Fertilize);
+        f = f.on_water(Water);
+        f = f.on_sunshine(Sunshine { amount: 10 });
+        assert_eq!(f, Flower::flowering(false, 0, 0));
     }
 }

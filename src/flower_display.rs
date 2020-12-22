@@ -1,6 +1,7 @@
 use cursive::theme::{Color, ColorStyle};
 
 #[derive(Debug, PartialEq)]
+/// Contains an enumeration of colors we can chose from
 pub struct FlowerColor;
 
 impl FlowerColor {
@@ -12,46 +13,57 @@ impl FlowerColor {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct FlowerGlyphxel {
-    foreground_color: Color,
-    background_color: Color,
-    character: char,
+    pub foreground_color: Color,
+    pub background_color: Color,
+    pub character: char,
 }
 
-type DrawnFlower = Vec<Vec<FlowerGlyphxel>>;
+pub type DrawnFlower = Vec<Vec<FlowerGlyphxel>>;
 
-fn draw_pot(mut drawn_flower: DrawnFlower) -> DrawnFlower {
+pub fn draw_pot(mut drawn_flower: DrawnFlower, background_color: Color) -> DrawnFlower {
     let x_max = drawn_flower[0].len();
-    let y_max = drawn_flower[0].len();
+    let y_max = drawn_flower.len();
 
     for x in 0..x_max {
         let dirt_color = FlowerColor::LIGHT_BROWN;
-        let background_color = FlowerColor::WHITE;
 
-        let character;
+        let mut character_first_row = '░';
+        let mut character_second_row = '░';
         if x == 0 {
-            character = '\\';
+            character_first_row = ' ';
+            character_second_row = '\\';
+        } else if x == 1 {
+            character_first_row = '\\';
+        } else if x == x_max - 2 {
+            character_first_row = '/';
         } else if x == x_max - 1 {
-            character = '/';
-        } else {
-            character = '░';
+            character_first_row = ' ';
+            character_second_row = '/';
         }
 
-        drawn_flower[0][x] = FlowerGlyphxel {
+        // Second row from the bottom
+        drawn_flower[y_max - 2][x] = FlowerGlyphxel {
             foreground_color: dirt_color,
-            background_color: background_color,
-            character,
+            background_color,
+            character: character_second_row,
+        };
+        // Last row
+        drawn_flower[y_max - 1][x] = FlowerGlyphxel {
+            foreground_color: dirt_color,
+            background_color,
+            character: character_first_row,
         };
     }
 
     drawn_flower
 }
 
-pub fn draw_empty_space(width: usize, height: usize) -> DrawnFlower {
+pub fn draw_empty_space(width: usize, height: usize, background_color: Color) -> DrawnFlower {
     let flower = vec![
         vec![
             FlowerGlyphxel {
                 foreground_color: FlowerColor::WHITE,
-                background_color: FlowerColor::BLACK,
+                background_color,
                 character: ' '
             };
             width
@@ -64,54 +76,93 @@ pub fn draw_empty_space(width: usize, height: usize) -> DrawnFlower {
 
 #[test]
 fn test_draw_flower_pot() {
-    let flower = draw_empty_space(7, 1);
-    let flower_pot = draw_pot(flower);
+    let flower = draw_empty_space(7, 2, FlowerColor::WHITE);
+    let flower_pot = draw_pot(flower, Color::RgbLowRes(5, 5, 5));
 
     assert_eq!(
         flower_pot,
-        vec![vec![
-            FlowerGlyphxel {
-                foreground_color: FlowerColor::LIGHT_BROWN,
-                background_color: FlowerColor::WHITE,
-                character: '\\'
-            },
-            FlowerGlyphxel {
-                foreground_color: FlowerColor::LIGHT_BROWN,
-                background_color: FlowerColor::WHITE,
-                character: '░'
-            },
-            FlowerGlyphxel {
-                foreground_color: FlowerColor::LIGHT_BROWN,
-                background_color: FlowerColor::WHITE,
-                character: '░'
-            },
-            FlowerGlyphxel {
-                foreground_color: FlowerColor::LIGHT_BROWN,
-                background_color: FlowerColor::WHITE,
-                character: '░'
-            },
-            FlowerGlyphxel {
-                foreground_color: FlowerColor::LIGHT_BROWN,
-                background_color: FlowerColor::WHITE,
-                character: '░'
-            },
-            FlowerGlyphxel {
-                foreground_color: FlowerColor::LIGHT_BROWN,
-                background_color: FlowerColor::WHITE,
-                character: '░'
-            },
-            FlowerGlyphxel {
-                foreground_color: FlowerColor::LIGHT_BROWN,
-                background_color: FlowerColor::WHITE,
-                character: '/'
-            },
-        ]]
+        vec![
+            vec![
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: ' '
+                },
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: '\\'
+                },
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: '░'
+                },
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: '░'
+                },
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: '░'
+                },
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: '/'
+                },
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: ' '
+                },
+            ],
+            vec![
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: '\\'
+                },
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: '░'
+                },
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: '░'
+                },
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: '░'
+                },
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: '░'
+                },
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: '░'
+                },
+                FlowerGlyphxel {
+                    foreground_color: FlowerColor::LIGHT_BROWN,
+                    background_color: FlowerColor::WHITE,
+                    character: '/'
+                },
+            ]
+        ]
     )
 }
 
 #[test]
 fn test_draw_empty_space() {
-    let flower = draw_empty_space(2, 3);
+    let flower = draw_empty_space(2, 3, FlowerColor::WHITE);
     assert_eq!(
         flower,
         vec![
